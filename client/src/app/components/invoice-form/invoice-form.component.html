@@ -1,0 +1,163 @@
+<!-- Alert Messages -->
+<div *ngIf="success" class="w-full max-w-4xl mx-auto p-4 mb-4 bg-blue-50 text-blue-800 rounded-md shadow">
+  <div class="flex items-center">
+    <svg class="h-6 w-6 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+    </svg>
+    <span class="font-semibold">success!</span>
+  </div>
+</div>
+
+<div *ngIf="error" class="w-full max-w-4xl mx-auto p-4 mb-4 bg-red-50 text-red-800 rounded-md shadow">
+  <div class="flex items-center">
+    <svg class="h-6 w-6 mr-2 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <span class="font-semibold">{{ error }}</span>
+  </div>
+</div>
+
+<!-- Main Container -->
+<div class="container mx-auto px-6 py-10">
+  <nav class="bg-black text-white px-4 py-3 flex items-center justify-between">
+
+    <span class="text-lg text-center font-semibold">Bienvenue sur votre tableau de bord</span>
+
+  </nav>
+
+
+  <!-- Form -->
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="w-full max-w-4xl mx-auto space-y-6">
+    <!-- Invoice Details -->
+    <div class="p-6 bg-slate-50 rounded-xl shadow-md">
+      <h2 class="text-2xl font-bold text-orange-600 mb-4">Invoice Details</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="block mb-1 text-sm font-medium text-slate-700">Customer</label>
+          <select formControlName="customer"
+            class="w-full border border-slate-300 rounded-md p-2 focus:ring-2 focus:ring-orange-400"
+            [ngClass]="{'border-red-500': submitted && form.get('customer')?.errors}">
+            <option value="" disabled>Select a customer</option>
+            <option *ngFor="let customer of customers" [value]="customer._id">{{ customer.name }}</option>
+          </select>
+          <div *ngIf="submitted && form.get('customer')?.errors" class="text-sm text-red-500 mt-1">
+            Customer is required
+          </div>
+        </div>
+
+        <div>
+          <label class="block mb-1 text-sm font-medium text-slate-700">Date</label>
+          <input type="date" formControlName="date"
+            class="w-full border border-slate-300 rounded-md p-2 focus:ring-2 focus:ring-orange-400"
+            [ngClass]="{'border-red-500': submitted && form.get('date')?.errors}">
+          <div *ngIf="submitted && form.get('date')?.errors" class="text-sm text-red-500 mt-1">
+            Date is required
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products -->
+    <div class="p-6 bg-slate-50 rounded-xl shadow-md">
+      <h2 class="text-2xl font-bold text-orange-600 mb-4">Products</h2>
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-orange-100 text-slate-800">
+            <th class="p-3">Product</th>
+            <th class="p-3">Quantity</th>
+            <th class="p-3">Unit Price</th>
+            <th class="p-3">Total</th>
+            <th class="p-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody formArrayName="products">
+          <tr *ngFor="let product of productsArray.controls; let i = index" [formGroupName]="i" class="border-b">
+            <td class="p-2">
+              <select formControlName="product" (change)="onProductSelect(i)"
+                class="w-full p-2 border border-slate-300 rounded-md"
+                [ngClass]="{'border-red-500': submitted && product.get('product')?.errors}">
+                <option value="" disabled>Select a product</option>
+                <option *ngFor="let p of products" [value]="p._id">{{ p.name }}</option>
+              </select>
+              <div *ngIf="submitted && product.get('product')?.errors" class="text-red-500 text-sm mt-1">
+                Product is required
+              </div>
+            </td>
+            <td class="p-2">
+              <input type="number" formControlName="quantity" (input)="calculateTotal(i)"
+                class="w-full p-2 border border-slate-300 rounded-md"
+                [ngClass]="{'border-red-500': submitted && product.get('quantity')?.errors}">
+              <div *ngIf="submitted && product.get('quantity')?.errors" class="text-red-500 text-sm mt-1">
+                Quantity is required
+              </div>
+            </td>
+            <td class="p-2">
+              <input type="number" formControlName="unitPrice" (input)="calculateTotal(i)"
+                class="w-full p-2 border border-slate-300 rounded-md"
+                [ngClass]="{'border-red-500': submitted && product.get('unitPrice')?.errors}">
+              <div *ngIf="submitted && product.get('unitPrice')?.errors" class="text-red-500 text-sm mt-1">
+                Price is required
+              </div>
+            </td>
+            <td class="p-2">
+              <input formControlName="total" type="number" readonly
+                class="w-full p-2 bg-gray-100 border border-slate-300 rounded-md" />
+            </td>
+            <td class="p-2 flex gap-2">
+              <button type="button" (click)="addProduct()"
+                class="bg-green-500 hover:bg-green-600 text-white p-2 rounded-md">
+                +
+              </button>
+              <button type="button" *ngIf="productsArray.length > 1" (click)="removeProduct(i)"
+                class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-md">
+                –
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Totals -->
+      <div class="mt-6 bg-orange-50 p-4 rounded-md">
+        <div class="flex justify-between border-b pb-2 mb-2">
+          <span class="font-medium text-slate-700">Subtotal</span>
+          <span>${{ getSubtotal().toFixed(2) }}</span>
+        </div>
+        <div class="flex justify-between border-b pb-2 mb-2">
+          <span class="font-medium text-slate-700">Tax (20%)</span>
+          <span>${{ getTax().toFixed(2) }}</span>
+        </div>
+        <div class="flex justify-between text-lg font-bold text-orange-700">
+          <span>Grand Total</span>
+          <span>${{ getGrandTotal().toFixed(2) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="p-6 bg-slate-50 rounded-xl shadow-md">
+      <h2 class="text-2xl font-bold text-orange-600 mb-4">Actions</h2>
+      <div class="flex flex-col sm:flex-row justify-between gap-4">
+        <button type="button" (click)="generatePDF()"
+          class="flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+          <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          Download PDF
+        </button>
+
+        <button type="submit" [disabled]="loading"
+          class="flex items-center justify-center px-6 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition">
+          <svg *ngIf="loading" class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          </svg>
+          Save Invoice
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
