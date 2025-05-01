@@ -142,19 +142,16 @@ export class InvoiceFormComponent implements OnInit {
     return product ? product.name : 'Unknown Product';
   }
 
-  // Generate PDF invoice
   generatePDF(): void {
     if (this.form.invalid) {
       this.submitted = true;
-      this.error = 'Please fill out the form correctly before generating PDF';
+      this.error = 'Please complete the form properly before generating the document.';
       return;
     }
 
     const formData = this.form.getRawValue();
-
-    // Find selected customer name
     const customer = this.customers.find(c => c._id === formData.customer);
-    const customerName = customer ? customer.name : 'Unknown Customer';
+    const customerName = customer ? customer.name : 'Unnamed Client';
 
     // Create new jsPDF instance
     // @ts-ignore - Access to library loaded via CDN
@@ -162,127 +159,102 @@ export class InvoiceFormComponent implements OnInit {
     // @ts-ignore
     const doc = new jsPDF();
 
-    // Define main colors
-    const primaryColor = [63, 81, 181]; // Indigo
-    const secondaryColor = [33, 33, 33]; // Dark gray
-    const accentColor = [76, 175, 80]; // Green
+    // Custom color palette
+    const headerColor = [103, 58, 183]; // Deep Purple
+    const darkText = [40, 40, 40];
+    const accentColor = [255, 87, 34]; // Deep Orange
 
-    // Add colored background at top
-    doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    // Header design
+    doc.setFillColor(headerColor[0], headerColor[1], headerColor[2]);
     doc.rect(0, 0, 210, 40, 'F');
-
-    // Space for logo if needed
-
-    // Add header
-    doc.setFontSize(28);
+    doc.setFontSize(26);
     doc.setTextColor(255, 255, 255);
-    doc.text('INVOICE', 105, 25, { align: 'center' });
+    doc.text('DIGITAL RECEIPT', 105, 25, { align: 'center' });
 
-    // Space for company information
-    doc.setFontSize(10);
-    doc.setTextColor(255, 255, 255);
-
-    // Add frame for customer information
-    doc.setDrawColor(230, 230, 230);
-    doc.setFillColor(249, 249, 249);
+    // Client Info Box
+    doc.setDrawColor(200, 200, 200);
+    doc.setFillColor(255, 253, 248);
     doc.roundedRect(15, 50, 180, 40, 3, 3, 'FD');
 
-    // Add customer information
-    doc.setFontSize(12);
-    doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
-    doc.setFont('helvetica', 'bold');
-    doc.text('CUSTOMER INFORMATION', 25, 60);
-    doc.setFont('helvetica', 'normal');
     doc.setFontSize(11);
-    doc.text(`Customer: ${customerName}`, 25, 70);
-    doc.text(`Date: ${new Date(formData.date).toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' })}`, 25, 80);
+    doc.setTextColor(darkText[0], darkText[1], darkText[2]);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Client Details', 25, 60);
 
-    // Space for other information if needed
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Name: ${customerName}`, 25, 70);
+    doc.text(`Date Issued: ${new Date(formData.date).toLocaleDateString('en-GB')}`, 25, 80);
 
-    // Prepare data for table
-    const tableColumn = ['Product', 'Quantity', 'Unit Price', 'Total'];
-    const tableRows: any[] = [];
+    // Table Setup
+    const headers = ['Item', 'Qty', 'Price (U)', 'Amount'];
+    const rows: any[] = [];
 
-    // Add products to table
     formData.products.forEach((product: any) => {
       const productData = this.products.find(p => p._id === product.product);
-      const productName = productData ? productData.name : 'Unknown Product';
-      const total = Number((product.quantity * product.unitPrice).toFixed(2));
-
-      tableRows.push([productName, product.quantity, product.unitPrice.toFixed(2) + ' $', total.toFixed(2) + ' $']);
+      const name = productData ? productData.name : 'Unnamed Item';
+      const amount = (product.quantity * product.unitPrice).toFixed(2);
+      rows.push([name, product.quantity, product.unitPrice.toFixed(2) + ' $', amount + ' $']);
     });
 
-    // Add table with improved style
     (doc as any).autoTable({
-      head: [tableColumn],
-      body: tableRows,
+      head: [headers],
+      body: rows,
       startY: 100,
-      theme: 'grid',
+      theme: 'striped',
       styles: {
-        fontSize: 10,
-        cellPadding: 6,
+        fontSize: 9,
+        cellPadding: 5,
         lineColor: [220, 220, 220],
         lineWidth: 0.1
       },
       headStyles: {
-        fillColor: primaryColor,
+        fillColor: headerColor,
         textColor: [255, 255, 255],
-        fontStyle: 'bold',
         halign: 'center'
+      },
+      alternateRowStyles: {
+        fillColor: [245, 245, 245]
       },
       columnStyles: {
         0: { fontStyle: 'bold' },
         3: { halign: 'right', fontStyle: 'bold' }
-      },
-      alternateRowStyles: {
-        fillColor: [249, 249, 249]
       }
     });
 
-    // Calculate Y position after table
     const finalY = (doc as any).lastAutoTable?.finalY + 10 || 150;
 
-    // Add frame for totals summary
-    doc.setDrawColor(220, 220, 220);
-    doc.setFillColor(249, 249, 249);
+    // Summary Box
+    doc.setFillColor(255, 253, 248);
     doc.roundedRect(110, finalY, 85, 40, 3, 3, 'FD');
-
-    // Add totals summary
-    doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
+    doc.setTextColor(darkText[0], darkText[1], darkText[2]);
     doc.setFontSize(10);
-    doc.text('Subtotal:', 120, finalY + 10);
+
+    doc.text('Amount Before Tax:', 120, finalY + 10);
     doc.text('Tax (20%):', 120, finalY + 20);
+
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
-    doc.text('GRAND TOTAL:', 120, finalY + 32);
+    doc.text('Total Due:', 120, finalY + 32);
 
-    // Add amounts aligned to right
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     doc.text(`${this.getSubtotal().toFixed(2)} $`, 185, finalY + 10, { align: 'right' });
     doc.text(`${this.getTax().toFixed(2)} $`, 185, finalY + 20, { align: 'right' });
+
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(accentColor[0], accentColor[1], accentColor[2]);
     doc.text(`${this.getGrandTotal().toFixed(2)} $`, 185, finalY + 32, { align: 'right' });
 
-    // Add separator line before grand total
     doc.setDrawColor(180, 180, 180);
     doc.line(120, finalY + 25, 185, finalY + 25);
 
-    // Space for other information if needed
-    const legalY = finalY + 60;
 
-    // Add footer
-    doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-    doc.rect(0, 280, 210, 17, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(10);
-    doc.text('Thank you for your business!', 105, 290, { align: 'center' });
 
-    // Download PDF
-    doc.save(`Invoice_${customerName}_${new Date().toISOString().split('T')[0]}.pdf`);
+    // Save document
+    doc.save(`Receipt_${customerName}_${new Date().toISOString().split('T')[0]}.pdf`);
   }
+
 
   onSubmit(): void {
     this.submitted = true;

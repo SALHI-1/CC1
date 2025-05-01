@@ -1,163 +1,248 @@
-<!-- Alert Messages -->
-<div *ngIf="success" class="w-full max-w-4xl mx-auto p-4 mb-4 bg-blue-50 text-blue-800 rounded-md shadow">
-  <div class="flex items-center">
-    <svg class="h-6 w-6 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-    </svg>
-    <span class="font-semibold">success!</span>
-  </div>
-</div>
+<!-- Main Container with gradient background -->
+<div class="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-800 text-white py-8 px-4 sm:px-6">
 
-<div *ngIf="error" class="w-full max-w-4xl mx-auto p-4 mb-4 bg-red-50 text-red-800 rounded-md shadow">
-  <div class="flex items-center">
-    <svg class="h-6 w-6 mr-2 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-    <span class="font-semibold">{{ error }}</span>
-  </div>
-</div>
-
-<!-- Main Container -->
-<div class="container mx-auto px-6 py-10">
-  <nav class="bg-black text-white px-4 py-3 flex items-center justify-between">
-
-    <span class="text-lg text-center font-semibold">Bienvenue sur votre tableau de bord</span>
-
-  </nav>
-
-
-  <!-- Form -->
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="w-full max-w-4xl mx-auto space-y-6">
-    <!-- Invoice Details -->
-    <div class="p-6 bg-slate-50 rounded-xl shadow-md">
-      <h2 class="text-2xl font-bold text-orange-600 mb-4">Invoice Details</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label class="block mb-1 text-sm font-medium text-slate-700">Customer</label>
-          <select formControlName="customer"
-            class="w-full border border-slate-300 rounded-md p-2 focus:ring-2 focus:ring-orange-400"
-            [ngClass]="{'border-red-500': submitted && form.get('customer')?.errors}">
-            <option value="" disabled>Select a customer</option>
-            <option *ngFor="let customer of customers" [value]="customer._id">{{ customer.name }}</option>
-          </select>
-          <div *ngIf="submitted && form.get('customer')?.errors" class="text-sm text-red-500 mt-1">
-            Customer is required
-          </div>
-        </div>
-
-        <div>
-          <label class="block mb-1 text-sm font-medium text-slate-700">Date</label>
-          <input type="date" formControlName="date"
-            class="w-full border border-slate-300 rounded-md p-2 focus:ring-2 focus:ring-orange-400"
-            [ngClass]="{'border-red-500': submitted && form.get('date')?.errors}">
-          <div *ngIf="submitted && form.get('date')?.errors" class="text-sm text-red-500 mt-1">
-            Date is required
-          </div>
-        </div>
-      </div>
+  <!-- Header with glass effect -->
+  <header class="w-full max-w-5xl mx-auto mb-8 backdrop-blur-md bg-white/10 rounded-2xl p-6 shadow-xl">
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-light tracking-wider">
+        <span class="font-bold">INVOICE</span>PRO
+      </h1>
+      <div class="text-xl font-light italic">Welcome</div>
     </div>
+  </header>
 
-    <!-- Products -->
-    <div class="p-6 bg-slate-50 rounded-xl shadow-md">
-      <h2 class="text-2xl font-bold text-orange-600 mb-4">Products</h2>
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="bg-orange-100 text-slate-800">
-            <th class="p-3">Product</th>
-            <th class="p-3">Quantity</th>
-            <th class="p-3">Unit Price</th>
-            <th class="p-3">Total</th>
-            <th class="p-3">Actions</th>
-          </tr>
-        </thead>
-        <tbody formArrayName="products">
-          <tr *ngFor="let product of productsArray.controls; let i = index" [formGroupName]="i" class="border-b">
-            <td class="p-2">
-              <select formControlName="product" (change)="onProductSelect(i)"
-                class="w-full p-2 border border-slate-300 rounded-md"
-                [ngClass]="{'border-red-500': submitted && product.get('product')?.errors}">
-                <option value="" disabled>Select a product</option>
-                <option *ngFor="let p of products" [value]="p._id">{{ p.name }}</option>
+  <!-- Alert Messages with frosted glass effect -->
+  <div *ngIf="success"
+    class="w-full max-w-5xl mx-auto mb-6 backdrop-blur-md bg-blue-400/20 border border-blue-300/50 rounded-xl shadow-lg overflow-hidden">
+    <div class="flex items-center p-4">
+      <svg class="h-6 w-6 mr-3 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+      <span class="font-light text-lg">success!</span>
+    </div>
+  </div>
+
+  <div *ngIf="error"
+    class="w-full max-w-5xl mx-auto mb-6 backdrop-blur-md bg-red-400/20 border border-red-300/50 rounded-xl shadow-lg overflow-hidden">
+    <div class="flex items-center p-4">
+      <svg class="h-6 w-6 mr-3 text-red-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span class="font-light text-lg">{{ error }}</span>
+    </div>
+  </div>
+
+  <!-- Form Container -->
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="w-full max-w-5xl mx-auto space-y-8">
+
+    <!-- Invoice Details with glass morphism -->
+    <div class="backdrop-blur-lg bg-white/10 rounded-2xl overflow-hidden border border-white/20 shadow-2xl">
+      <div class="p-6">
+        <h2 class="text-2xl font-light mb-6 flex items-center">
+          <span
+            class="inline-block w-8 h-8 mr-2 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+          </span>
+          Invoice Details
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <label class="block mb-2 text-sm font-light text-gray-200">Customer</label>
+            <div class="relative">
+              <select formControlName="customer"
+                class="w-full bg-white/5 backdrop-blur-sm border border-white/20 rounded-xl p-3 focus:ring-2 focus:ring-purple-400 appearance-none text-white"
+                [ngClass]="{'border-red-300': submitted && form.get('customer')?.errors}">
+                <option value="" disabled class="text-gray-800">Select a customer</option>
+                <option *ngFor="let customer of customers" [value]="customer._id" class="text-gray-800">{{ customer.name
+                  }}</option>
               </select>
-              <div *ngIf="submitted && product.get('product')?.errors" class="text-red-500 text-sm mt-1">
-                Product is required
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-white">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
               </div>
-            </td>
-            <td class="p-2">
-              <input type="number" formControlName="quantity" (input)="calculateTotal(i)"
-                class="w-full p-2 border border-slate-300 rounded-md"
-                [ngClass]="{'border-red-500': submitted && product.get('quantity')?.errors}">
-              <div *ngIf="submitted && product.get('quantity')?.errors" class="text-red-500 text-sm mt-1">
-                Quantity is required
-              </div>
-            </td>
-            <td class="p-2">
-              <input type="number" formControlName="unitPrice" (input)="calculateTotal(i)"
-                class="w-full p-2 border border-slate-300 rounded-md"
-                [ngClass]="{'border-red-500': submitted && product.get('unitPrice')?.errors}">
-              <div *ngIf="submitted && product.get('unitPrice')?.errors" class="text-red-500 text-sm mt-1">
-                Price is required
-              </div>
-            </td>
-            <td class="p-2">
-              <input formControlName="total" type="number" readonly
-                class="w-full p-2 bg-gray-100 border border-slate-300 rounded-md" />
-            </td>
-            <td class="p-2 flex gap-2">
-              <button type="button" (click)="addProduct()"
-                class="bg-green-500 hover:bg-green-600 text-white p-2 rounded-md">
-                +
-              </button>
-              <button type="button" *ngIf="productsArray.length > 1" (click)="removeProduct(i)"
-                class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-md">
-                –
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+            <div *ngIf="submitted && form.get('customer')?.errors" class="text-sm text-red-300 mt-2">
+              Customer is required
+            </div>
+          </div>
 
-      <!-- Totals -->
-      <div class="mt-6 bg-orange-50 p-4 rounded-md">
-        <div class="flex justify-between border-b pb-2 mb-2">
-          <span class="font-medium text-slate-700">Subtotal</span>
-          <span>${{ getSubtotal().toFixed(2) }}</span>
-        </div>
-        <div class="flex justify-between border-b pb-2 mb-2">
-          <span class="font-medium text-slate-700">Tax (20%)</span>
-          <span>${{ getTax().toFixed(2) }}</span>
-        </div>
-        <div class="flex justify-between text-lg font-bold text-orange-700">
-          <span>Grand Total</span>
-          <span>${{ getGrandTotal().toFixed(2) }}</span>
+          <div>
+            <label class="block mb-2 text-sm font-light text-gray-200">Date</label>
+            <div class="relative">
+              <input type="date" formControlName="date"
+                class="w-full bg-white/5 backdrop-blur-sm border border-white/20 rounded-xl p-3 focus:ring-2 focus:ring-purple-400 text-white"
+                [ngClass]="{'border-red-300': submitted && form.get('date')?.errors}">
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-white">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+            </div>
+            <div *ngIf="submitted && form.get('date')?.errors" class="text-sm text-red-300 mt-2">
+              Date is required
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Actions -->
-    <div class="p-6 bg-slate-50 rounded-xl shadow-md">
-      <h2 class="text-2xl font-bold text-orange-600 mb-4">Actions</h2>
-      <div class="flex flex-col sm:flex-row justify-between gap-4">
-        <button type="button" (click)="generatePDF()"
-          class="flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
-          <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-          </svg>
-          Download PDF
-        </button>
+    <!-- Products Section with glass morphism -->
+    <div class="backdrop-blur-lg bg-white/10 rounded-2xl overflow-hidden border border-white/20 shadow-2xl">
+      <div class="p-6">
+        <h2 class="text-2xl font-light mb-6 flex items-center">
+          <span
+            class="inline-block w-8 h-8 mr-2 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+          </span>
+          Products
+        </h2>
 
-        <button type="submit" [disabled]="loading"
-          class="flex items-center justify-center px-6 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition">
-          <svg *ngIf="loading" class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none"
-            viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-          </svg>
-          Save Invoice
-        </button>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead>
+              <tr>
+                <th class="px-4 py-3 font-normal text-gray-300 uppercase text-xs tracking-wider">Product</th>
+                <th class="px-4 py-3 font-normal text-gray-300 uppercase text-xs tracking-wider">Quantity</th>
+                <th class="px-4 py-3 font-normal text-gray-300 uppercase text-xs tracking-wider">Unit Price</th>
+                <th class="px-4 py-3 font-normal text-gray-300 uppercase text-xs tracking-wider">Total</th>
+                <th class="px-4 py-3 font-normal text-gray-300 uppercase text-xs tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody formArrayName="products" class="divide-y divide-white/10">
+              <tr *ngFor="let product of productsArray.controls; let i = index" [formGroupName]="i">
+                <td class="px-4 py-3">
+                  <div class="relative">
+                    <select formControlName="product" (change)="onProductSelect(i)"
+                      class="w-full bg-white/5 backdrop-blur-sm border border-white/20 rounded-xl p-2 focus:ring-2 focus:ring-purple-400 appearance-none text-white"
+                      [ngClass]="{'border-red-300': submitted && product.get('product')?.errors}">
+                      <option value="" disabled class="text-gray-800">Select a product</option>
+                      <option *ngFor="let p of products" [value]="p._id" class="text-gray-800">{{ p.name }}</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
+                      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div *ngIf="submitted && product.get('product')?.errors" class="text-red-300 text-xs mt-1">
+                    Required
+                  </div>
+                </td>
+                <td class="px-4 py-3">
+                  <input type="number" formControlName="quantity" (input)="calculateTotal(i)"
+                    class="w-full bg-white/5 backdrop-blur-sm border border-white/20 rounded-xl p-2 focus:ring-2 focus:ring-purple-400 text-white"
+                    [ngClass]="{'border-red-300': submitted && product.get('quantity')?.errors}">
+                  <div *ngIf="submitted && product.get('quantity')?.errors" class="text-red-300 text-xs mt-1">
+                    Required
+                  </div>
+                </td>
+                <td class="px-4 py-3">
+                  <input type="number" formControlName="unitPrice" (input)="calculateTotal(i)"
+                    class="w-full bg-white/5 backdrop-blur-sm border border-white/20 rounded-xl p-2 focus:ring-2 focus:ring-purple-400 text-white"
+                    [ngClass]="{'border-red-300': submitted && product.get('unitPrice')?.errors}">
+                  <div *ngIf="submitted && product.get('unitPrice')?.errors" class="text-red-300 text-xs mt-1">
+                    Required
+                  </div>
+                </td>
+                <td class="px-4 py-3">
+                  <input formControlName="total" type="number" readonly
+                    class="w-full bg-white/5 backdrop-blur-sm border border-white/20 rounded-xl p-2 text-white" />
+                </td>
+                <td class="px-4 py-3">
+                  <div class="flex gap-2">
+                    <button type="button" (click)="addProduct()"
+                      class="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-green-400 to-emerald-500 hover:opacity-90 text-white">
+                      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                    </button>
+                    <button type="button" *ngIf="productsArray.length > 1" (click)="removeProduct(i)"
+                      class="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-red-400 to-pink-500 hover:opacity-90 text-white">
+                      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Totals with glass effect -->
+        <div class="mt-8 rounded-xl backdrop-blur-md bg-white/10 border border-white/20 p-5">
+          <div class="space-y-4">
+            <div class="flex justify-between pb-3 border-b border-white/10">
+              <span class="font-light text-gray-300">Subtotal</span>
+              <span class="font-medium">${{ getSubtotal().toFixed(2) }}</span>
+            </div>
+            <div class="flex justify-between pb-3 border-b border-white/10">
+              <span class="font-light text-gray-300">Tax (20%)</span>
+              <span class="font-medium">${{ getTax().toFixed(2) }}</span>
+            </div>
+            <div class="flex justify-between pt-2">
+              <span class="text-xl font-bold">Grand Total</span>
+              <span
+                class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-purple-500">
+                ${{ getGrandTotal().toFixed(2) }}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+
+    <!-- Actions Section with glass morphism -->
+    <div class="backdrop-blur-lg bg-white/10 rounded-2xl overflow-hidden border border-white/20 shadow-2xl">
+      <div class="p-6">
+        <h2 class="text-2xl font-light mb-6 flex items-center">
+          <span
+            class="inline-block w-8 h-8 mr-2 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+            </svg>
+          </span>
+          Actions
+        </h2>
+
+        <div class="flex flex-col sm:flex-row justify-end gap-4">
+          <button type="button" (click)="generatePDF()"
+            class="group relative px-6 py-3 bg-indigo-800/50 backdrop-blur-sm hover:bg-indigo-700/70 border border-indigo-600/30 rounded-xl transition-all flex items-center justify-center overflow-hidden">
+            <span
+              class="absolute inset-0 w-0 bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-300 ease-out group-hover:w-full"></span>
+            <span class="relative flex items-center">
+              <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Download PDF
+            </span>
+          </button>
+
+          <button type="submit" [disabled]="loading"
+            class="group relative px-8 py-3 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 rounded-xl transition-all flex items-center justify-center">
+            <svg *ngIf="loading" class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            <span>Save Invoice</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
   </form>
 </div>
